@@ -30,11 +30,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    /**
+     * @param auth
+     * @throws Exception kullanıcının bilgilerinin hafızada tutulacağını şifrelerinin passwordEncoder ile şifreliyoruz.
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        // configure AuthenticationManager so that it knows from where to load
-        // user for matching credentials
-        // Use BCryptPasswordEncoder
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -49,12 +50,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * @param httpSecurity
+     * @throws Exception e
+     *                   Güvenlik Ayarları
+     */
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // We don't need CSRF for this example
-        httpSecurity.csrf().disable()
-                // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/api/auth/register", "/api/auth/login", "/api/get/posts", "/api/get/post/**").
+        httpSecurity.
+                csrf().
+                disable()
+                .authorizeRequests().
+                antMatchers(
+                        "/api/auth/register",
+                        "/api/auth/login",
+                        "/api/get/posts",
+                        "/api/get/post/**",
+                        "http://localhost:8081"
+                ).
                 permitAll().
                 anyRequest().
                 authenticated().
@@ -65,7 +78,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // Add a filter to validate the tokens with every request
+        /**
+         * HER ISTEKTE DOĞRULAMAK IÇIN FILTRE EKLIYORUZ
+         */
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

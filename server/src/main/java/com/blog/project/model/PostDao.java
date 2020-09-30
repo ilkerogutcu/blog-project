@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Table(name = "post")
@@ -28,13 +28,21 @@ public class PostDao {
 
     @Column(nullable = false)
     @NotNull
+    private String postImageUrl;
+
+    @Column(nullable = false)
+    @NotNull
+    private String postImageDescription;
+
+    @Column(nullable = false)
+    @NotNull
     private String username;
 
     @Column(nullable = false)
     @NotNull
-    private Instant createdDate;
+    private Date createdDate;
 
     @Column(nullable = false)
     @NotNull
-    private Instant updatedDate;
+    private Date updatedDate;
 }

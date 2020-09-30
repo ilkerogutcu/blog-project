@@ -61,6 +61,10 @@ public class AuthController {
         }
     }
 
+    /**
+     * @return User
+     * Aktif kullanıcıyı alıyoruz
+     */
     public Optional<User> getCurrentUser() {
         User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();

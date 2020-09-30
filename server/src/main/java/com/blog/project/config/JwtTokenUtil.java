@@ -17,14 +17,28 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    /**
+     * Serializable hata vermemesi için
+     */
     private static final long serialVersionUID = -2550185165626007488L;
 
+    /**
+     * Token sonlanma süresi
+     */
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+    /**
+     * Secret key belirliyoruz
+     */
     @Value("${jwt.secret}")
     private String secret;
 
-    //jwt token içinden username alıyoruz
+    /**
+     * @param token
+     * @return userName(string)
+     * TOKEN IÇINDEN USERNAME ALIYORUZ
+     */
+
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
@@ -34,34 +48,58 @@ public class JwtTokenUtil implements Serializable {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    //token içinden claim çekiyoruz
+    /**
+     * @param token
+     * @param claimsResolver
+     * @param <T>
+     * @return claimsResolver.apply(claims)
+     * <p>
+     * TOKEN IÇINDEN CLAIM ÇEKIYORUZ
+     */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
-    //for retrieveing any information from token we will need the secret key
+    /**
+     * @param token
+     * @return claims
+     * TOKENDAN HERHANGI BIR BILGI ALMAK IÇIN SECRETKEY'E IHTIYACIMIZ OLACAK.
+     */
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    //token sonlanmış mı kontrolü
+    /**
+     * @param token
+     * @return true or false
+     * TOKEN SONLANMIŞ MI KONTROLÜ
+     */
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
 
-    //user için token oluşturma
+    /**
+     * @param userDetails
+     * @return Token
+     * TOKEN OLUŞTURUYORUZ
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
-    //while creating the token -
-    //1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
-    //2. Sign the JWT using the HS512 algorithm and secret key.
-    //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
-    //   compaction of the JWT to a URL-safe string
+    /**
+     * @param claims
+     * @param subject
+     * @return Jwts
+     * TOKEN OLUŞTURUYORUZ
+     * "SETSUBJECT" ILE TOKEN IÇINE KONUYU SET EDIYORUZ
+     * "SETISSUEDAT" ILE TOKEN OLUŞTURMA TARIHINI SET EDIYORUZ
+     * "SETEXPIRATION" ILE TOKEN BITIŞ SÜRESINI SET EDIYORUZ
+     * "SIGNWITH" ILE TOKEN IMZA TÜRÜNÜ BELIRLIYORUZ
+     */
     private String doGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
@@ -69,7 +107,12 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
-    //validate token
+    /**
+     * @param token
+     * @param userDetails
+     * @return true or false
+     * TOKEN DOĞRULAMA IŞLEMI
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

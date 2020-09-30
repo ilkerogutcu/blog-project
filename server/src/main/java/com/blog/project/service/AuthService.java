@@ -9,9 +9,15 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
+    /**
+     * @return Current User
+     * AKTİF KULLANICIYI ALIYORUZ
+     */
     public Optional<org.springframework.security.core.userdetails.User> getCurrentUser() {
         User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
-                getContext().getAuthentication().getPrincipal();
+                getContext().
+                getAuthentication().
+                getPrincipal();
         return Optional.of(principal);
     }
 }

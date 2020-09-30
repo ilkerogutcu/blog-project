@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -43,19 +44,25 @@ public class PostService {
         PostDetailsDto postDto = new PostDetailsDto();
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
+        postDto.setPostImageUrl(post.getPostImageUrl());
+        postDto.setPostImageDescription(post.getPostImageDescription());
         postDto.setDescription(post.getDescription());
         postDto.setUsername(post.getUsername());
+        postDto.setCreatedDate(post.getCreatedDate());
         return postDto;
     }
 
     private PostDao mapFromDtoToPost(PostDetailsDto postDto) {
+
         PostDao post = new PostDao();
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
+        post.setPostImageUrl(postDto.getPostImageUrl());
+        post.setPostImageDescription(postDto.getPostImageDescription());
         User loggedInUser = authService.getCurrentUser().orElseThrow(() -> new IllegalArgumentException("User Not Found"));
-        post.setCreatedDate(Instant.now());
+        post.setCreatedDate(Date.from(Instant.now()));
         post.setUsername(loggedInUser.getUsername());
-        post.setUpdatedDate(Instant.now());
+        post.setUpdatedDate(Date.from(Instant.now()));
         return post;
     }
 }
