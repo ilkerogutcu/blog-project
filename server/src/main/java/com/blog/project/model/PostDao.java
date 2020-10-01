@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -45,4 +46,8 @@ public class PostDao {
     @Column(nullable = false)
     @NotNull
     private Date updatedDate;
+
+    @ManyToMany
+    @JoinTable(name = "postCategories")
+    private List<CategoryDao> categories;
 }
