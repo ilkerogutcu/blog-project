@@ -48,6 +48,6 @@ public class PostDao {
     private Date updatedDate;
 
     @ManyToMany
-    @JoinTable(name = "postCategories")
-    private List<CategoryDao> categories;
+    @JoinTable(name = "postTags")
+    private List<TagDao> tags;
 }

@@ -1,6 +1,6 @@
 package com.blog.project.dto;
 
-import com.blog.project.model.CategoryDao;
+import com.blog.project.model.TagDao;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,6 @@ public class PostDetailsDto {
     public String postImageUrl;
     public String postImageDescription;
     public Date createdDate;
-    public List<CategoryDao> categories;
+    public List<TagDao> tags;
 
 }

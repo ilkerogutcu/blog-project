@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "category")
+@Table(name = "tag")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDao {
+public class TagDao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
     @NotNull
-    private String categoryName;
-    
+    private String tagName;
+
 }

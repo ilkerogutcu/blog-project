@@ -66,7 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/auth/login",
                         "/api/get/posts",
                         "/api/get/post/**",
-                        "http://localhost:8081"
+                        "http://localhost:8081",
+                        "/api/get/tag/**",
+                        "/api/get/tags"
                 ).
                 permitAll().
                 anyRequest().

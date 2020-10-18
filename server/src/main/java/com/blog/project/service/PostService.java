@@ -49,7 +49,7 @@ public class PostService {
         postDto.setDescription(post.getDescription());
         postDto.setUsername(post.getUsername());
         postDto.setCreatedDate(post.getCreatedDate());
-        postDto.setCategories(post.getCategories());
+        postDto.setTags(post.getTags());
         return postDto;
     }
 
@@ -64,7 +64,7 @@ public class PostService {
         post.setCreatedDate(Date.from(Instant.now()));
         post.setUsername(loggedInUser.getUsername());
         post.setUpdatedDate(Date.from(Instant.now()));
-        post.setCategories(postDto.getCategories());
+        post.setTags(postDto.getTags());
         return post;
     }
 }
