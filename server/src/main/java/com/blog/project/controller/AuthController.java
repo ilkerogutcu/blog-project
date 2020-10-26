@@ -1,24 +1,27 @@
 package com.blog.project.controller;
 
 import com.blog.project.config.JwtTokenUtil;
-import com.blog.project.dto.UserDto;
-import com.blog.project.payload.JwtRequest;
-import com.blog.project.service.JwtUserDetailsService;
+import com.blog.project.model.UserDao;
+import com.blog.project.payload.LoginRequest;
+import com.blog.project.payload.SignupRequest;
+import com.blog.project.repository.UserRepository;
+import com.blog.project.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -29,27 +32,34 @@ public class AuthController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private UserRepository userRepository;
 
-    @PostMapping
-    @RequestMapping(value = "/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    private final AuthService authService;
 
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-        final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(token);
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@Validated @RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 
     @PostMapping
     @RequestMapping(value = "/register")
-    public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
-        return ResponseEntity.ok(userDetailsService.save(user));
+    public ResponseEntity<?> saveUser(@RequestBody SignupRequest signUpRequest) throws Exception {
+        return authService.register(signUpRequest);
     }
+
+    @GetMapping
+    @PreAuthorize("hasRole('admin')")
+    @RequestMapping(value = "/get/user/{username}")
+    private Optional<UserDao> getUserByUsername(@PathVariable @RequestBody String username) {
+        return userRepository.findByUsername(username);
+    }
+
 
     private void authenticate(String username, String password) throws Exception {
         try {
@@ -61,10 +71,10 @@ public class AuthController {
         }
     }
 
-    /**
-     * @return User
-     * Aktif kullanıcıyı alıyoruz
-     */
+
+    @GetMapping
+    @PreAuthorize("hasRole('admin')")
+    @RequestMapping(value = "/get/user")
     public Optional<User> getCurrentUser() {
         User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();

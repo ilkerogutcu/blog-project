@@ -1,10 +1,12 @@
 package com.blog.project.service;
 
+import com.blog.project.config.JwtTokenUtil;
 import com.blog.project.dto.PostDetailsDto;
 import com.blog.project.extensions.PostNotFoundException;
 import com.blog.project.model.PostDao;
 import com.blog.project.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,10 @@ public class PostService {
     private AuthService authService;
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @Transactional
     public List<PostDetailsDto> getAllPosts() {
@@ -60,7 +66,8 @@ public class PostService {
         post.setDescription(postDto.getDescription());
         post.setPostImageUrl(postDto.getPostImageUrl());
         post.setPostImageDescription(postDto.getPostImageDescription());
-        User loggedInUser = authService.getCurrentUser().orElseThrow(() -> new IllegalArgumentException("User Not Found"));
+        User loggedInUser = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
         post.setCreatedDate(Date.from(Instant.now()));
         post.setUsername(loggedInUser.getUsername());
         post.setUpdatedDate(Date.from(Instant.now()));

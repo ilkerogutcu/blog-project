@@ -24,9 +24,9 @@ public class TagController {
     }
 
     @PostMapping("/create/tag")
-    public ResponseEntity createTag(@RequestBody TagDao tagDao) {
+    public ResponseEntity<?> createTag(@RequestBody TagDao tagDao) {
         this.tagRepository.save(tagDao);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/get/tag/{id}")

@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService jwtUserDetailsService;
 
     @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private AuthTokenFilter jwtRequestFilter;
 
     /**
      * @param auth
@@ -64,11 +64,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 antMatchers(
                         "/api/auth/register",
                         "/api/auth/login",
+                        "/api/auth/get/**",
                         "/api/get/posts",
                         "/api/get/post/**",
-                        "http://localhost:8081",
+                        "/api/get/**",
+                        "http://localhost:8081/**",
                         "/api/get/tag/**",
                         "/api/get/tags"
+
                 ).
                 permitAll().
                 anyRequest().
