@@ -18,7 +18,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class PostService {
+public class PostServiceImpl implements IPostService {
     @Autowired
     private AuthService authService;
     @Autowired
@@ -50,6 +50,7 @@ public class PostService {
         PostDetailsDto postDto = new PostDetailsDto();
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
+        postDto.setSubtitle(post.getSubtitle());
         postDto.setPostImageUrl(post.getPostImageUrl());
         postDto.setPostImageDescription(post.getPostImageDescription());
         postDto.setDescription(post.getDescription());
@@ -63,6 +64,7 @@ public class PostService {
 
         PostDao post = new PostDao();
         post.setTitle(postDto.getTitle());
+        post.setSubtitle(postDto.getSubtitle());
         post.setDescription(postDto.getDescription());
         post.setPostImageUrl(postDto.getPostImageUrl());
         post.setPostImageDescription(postDto.getPostImageDescription());

@@ -14,6 +14,7 @@ import java.util.List;
 public class PostDetailsDto {
     public Long id;
     public String title;
+    public String subtitle;
     public String description;
     public String username;
     public String postImageUrl;

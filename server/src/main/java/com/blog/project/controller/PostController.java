@@ -1,7 +1,7 @@
 package com.blog.project.controller;
 
 import com.blog.project.dto.PostDetailsDto;
-import com.blog.project.service.PostService;
+import com.blog.project.service.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postService;
 
     @GetMapping("/get/posts")
     public ResponseEntity<List<PostDetailsDto>> gelAllPosts() {

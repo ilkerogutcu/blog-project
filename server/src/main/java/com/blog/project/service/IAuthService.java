@@ -5,7 +5,9 @@ import com.blog.project.payload.SignupRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface IAuthService {
-    public ResponseEntity<?> register(SignupRequest signUpRequest);
+    ResponseEntity<?> register(SignupRequest signUpRequest);
 
-    public ResponseEntity<?> login(LoginRequest loginRequest);
+    ResponseEntity<?> login(LoginRequest loginRequest);
+
+
 }

@@ -13,11 +13,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @RestController
@@ -31,16 +30,17 @@ public class AuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired(required = true)
+    UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
-
-
     private final AuthService authService;
 
+    @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
-    }
 
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Validated @RequestBody LoginRequest loginRequest) {
@@ -54,9 +54,9 @@ public class AuthController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/get/user/{username}")
-    private Optional<UserDao> getUserByUsername(@PathVariable @RequestBody String username) {
+    public Optional<UserDao> getUserByUsername(@PathVariable @RequestBody String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -73,11 +73,14 @@ public class AuthController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('admin')")
-    @RequestMapping(value = "/get/user")
-    public Optional<User> getCurrentUser() {
-        User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
-                getContext().getAuthentication().getPrincipal();
-        return Optional.of(principal);
+    @RequestMapping(value = "/get/currentUser")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String getCurrentUser(Principal principal) {
+        try {
+            return principal.getName();
+        } catch (NullPointerException e) {
+            return "null";
+        }
+
     }
 }

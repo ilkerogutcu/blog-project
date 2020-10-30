@@ -25,6 +25,10 @@ public class PostDao {
 
     @Column(nullable = false)
     @NotNull
+    private String subtitle;
+
+    @Column(nullable = false)
+    @NotNull
     private String description;
 
     @Column(nullable = false)

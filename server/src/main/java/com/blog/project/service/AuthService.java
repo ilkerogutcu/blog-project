@@ -30,16 +30,17 @@ import java.util.stream.Collectors;
 @Data
 public class AuthService implements IAuthService {
 
-    private final UserRepository userRepository;
+    @Autowired(required = true)
+    private UserRepository userRepository;
+
     private final PasswordEncoder encoder;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtUtils;
 
     @Autowired
-    public AuthService(UserRepository userRepository, PasswordEncoder encoder, RoleRepository roleRepository,
+    public AuthService(PasswordEncoder encoder, RoleRepository roleRepository,
                        AuthenticationManager authenticationManager, JwtTokenUtil jwtUtils) {
-        this.userRepository = userRepository;
         this.encoder = encoder;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
@@ -118,4 +119,6 @@ public class AuthService implements IAuthService {
         );
 
     }
+
+
 }
